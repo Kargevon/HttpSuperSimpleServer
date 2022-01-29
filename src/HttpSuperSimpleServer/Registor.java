@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -166,4 +167,36 @@ public class Registor {
 
 		}
 	}
+	public static String[] listFile(String path) {
+
+		ArrayList<String> arl = new ArrayList<String>();
+
+		walk(path, arl);
+
+		for (String st : arl) {
+			//System.out.println("finded: " + st);
+		}
+		String[] temp = new String[arl.size()];
+		return arl.toArray(temp);
+	}
+
+	private static void walk(String path, ArrayList<String> brl) {
+
+		File root = new File(path);
+		File[] list = root.listFiles();
+
+		if (list == null)
+			return;
+
+		for (File f : list) {
+			if (f.isDirectory()) {
+				walk(f.getAbsolutePath(), brl);
+				// System.out.println("Dir:" + f.getAbsoluteFile());
+
+			} else {
+				// System.out.println("File:" + f.getAbsoluteFile());
+				brl.add(f.getAbsolutePath());
+
+			}
+		}
 }
