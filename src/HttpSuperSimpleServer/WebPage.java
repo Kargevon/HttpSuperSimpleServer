@@ -9,11 +9,13 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import defauld.mainlaunch;
+
 
 public class WebPage implements HttpHandler {
 
@@ -27,24 +29,7 @@ public class WebPage implements HttpHandler {
 		
 	}
 
-	@Override
-	public void handle(HttpExchange t) throws IOException {
-		
-		
-	}
-	
-	
-}
-class Page implements HttpHandler {
-
-	private String path;
-
-	public Page(String path) {
-		this.path = path;
-	}
-
-	private String postmahad(HttpExchange t) throws IOException {
-	
+	private String POSTmanager(HttpExchange t) {
 		InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
 		BufferedReader br = new BufferedReader(isr);
 
@@ -67,31 +52,69 @@ class Page implements HttpHandler {
 			e.printStackTrace();
 		}
 		return result;
+		
 	}
-
+	private String GETmanager(HttpExchange t) {
+		Map<String, String> mp = queryToMap(t.getRequestURI().getQuery());
+		
+	}
+	
 	@Override
 	public void handle(HttpExchange t) throws IOException {
 		printInfo(t);
-		// System.out.println(path+" "+t.getRequestMethod());
-
-		// if (t.getRequestMethod().equals("GET")) {
-
+		String response ="";
+		if(t.getRequestMethod().equals("POST")) {
+		//обрабоатывае пост запрос
+			response="";
+		}
+		else if(t.getRequestMethod().equals("GET")) {
+			//обрабатываем гет запрос
+			response="";
+		}
+		
+		OutputStream outputStream = t.getResponseBody();
+		
+		if(response.length()>0) {
+			//если нужен специфичный ответ, т.е. функции обработки запросов чет вернули, то возвращаем то, шо они вернули
+			t.sendResponseHeaders(200, response.length());
+			outputStream.write(response.getBytes());
+		}else {
+			//иначе выводим страницу ебать да
+		
 		File index = new File(path);
 		t.sendResponseHeaders(200, index.length());
-
-		OutputStream outputStream = t.getResponseBody();
 		Path p = index.toPath();
-
 		Files.copy(p, outputStream);
+		}
 		outputStream.close();
 		t.close();
-		/*
-		 * } else if (t.getRequestMethod().equals("POST")) {
-		 * 
-		 * String response = postmahad(t); t.sendResponseHeaders(200,
-		 * response.length()); OutputStream out = t.getResponseBody();
-		 * out.write(response.getBytes()); }
-		 */
+		
+	}
+	private static void printInfo(HttpExchange t) {
+
+		String adr = t.getRemoteAddress().getAddress().toString();
+		String prot = t.getProtocol();
+		String uri = t.getRequestURI().toASCIIString();
+		String meth = t.getRequestMethod();
+		String code = t.getResponseCode() + "";
+		System.out.println(
+				"|adr: " + adr + " |prot: " + prot + " |uri: " + uri + " |method: " + meth + " |code: " + code + " |");
 
 	}
+	public Map<String, String> queryToMap(String query) {
+	    if(query == null) {
+	        return null;
+	    }
+	    Map<String, String> result = new HashMap<>();
+	    for (String param : query.split("&")) {
+	        String[] entry = param.split("=");
+	        if (entry.length > 1) {
+	            result.put(entry[0], entry[1]);
+	        }else{
+	            result.put(entry[0], "");
+	        }
+	    }
+	    return result;
+	}
 }
+

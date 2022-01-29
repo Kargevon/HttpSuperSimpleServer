@@ -20,17 +20,7 @@ import com.sun.net.httpserver.HttpServer;
 import sun.font.CreatedFontTracker;
 
 public class Registor {
-	private static void printInfo(HttpExchange t) {
-
-		String adr = t.getRemoteAddress().getAddress().toString();
-		String prot = t.getProtocol();
-		String uri = t.getRequestURI().toASCIIString();
-		String meth = t.getRequestMethod();
-		String code = t.getResponseCode() + "";
-		System.out.println(
-				"|adr: " + adr + " |prot: " + prot + " |uri: " + uri + " |method: " + meth + " |code: " + code + " |");
-
-	}
+	
 
 	private int port;
 	private String server_folder;
