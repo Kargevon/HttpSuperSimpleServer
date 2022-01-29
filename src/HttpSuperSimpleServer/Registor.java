@@ -17,24 +17,51 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import defauld.FileProcessor;
-import defauld.mainlaunch;
-import defauld.TGNHttpServer.Man;
-import defauld.TGNHttpServer.Page;
-import defauld.TGNHttpServer.SaveEmail;
+import sun.font.CreatedFontTracker;
 
 public class Registor {
 	private static void printInfo(HttpExchange t) {
-	
+
 		String adr = t.getRemoteAddress().getAddress().toString();
 		String prot = t.getProtocol();
 		String uri = t.getRequestURI().toASCIIString();
-		String meth =	t.getRequestMethod();
-		String code = t.getResponseCode()+"";
-		System.out.println("|adr: "+adr+" |prot: "+prot+" |uri: "+uri+" |method: "+meth+" |code: "+code+" |");
+		String meth = t.getRequestMethod();
+		String code = t.getResponseCode() + "";
+		System.out.println(
+				"|adr: " + adr + " |prot: " + prot + " |uri: " + uri + " |method: " + meth + " |code: " + code + " |");
+
+	}
+
+	private int port;
+	private String server_folder;
+	private HttpServer server;
+
+	public Registor() {
+
+	}
+
+	public Registor(int port, String server_folder) {
+		this.port = port;
+		this.server_folder = server_folder;
+	}
+
+	public void init() {
+		server = HttpServer.create(new InetSocketAddress(port), 0);
+		server.setExecutor(null);
+	}
+
+	private void addContext() {
+
+		System.out.println("Server folder: "+server_folder);
+		String filelist[] = listFile(server_folder);
 		
+		for(int i=0; i!=filelist.length; ++i) {
+			
+			server.createContext(filelist[i].substring(server_folder.length()).replace('\\', '/'), new Page());
+		}
 		
 	}
+
 	public void one(String pathtoserverfolder) throws Exception {
 
 		File dirhome = new File(pathtoserverfolder);
@@ -56,12 +83,12 @@ public class Registor {
 
 		serv.createContext("/suck", new Man());
 		serv.createContext("/dick", new SaveEmail());
-		
-		
+
 		serv.setExecutor(null);
 		serv.start();
 
 	}
+
 	class Man implements HttpHandler {
 
 		@Override
@@ -91,14 +118,14 @@ public class Registor {
 			}
 
 			String response = result;
-			//response = response.replaceAll("�", "�");
+			// response = response.replaceAll("�", "�");
 			System.out.println("response -- " + response);
 			byte[] germanBytes = response.getBytes(StandardCharsets.UTF_16);
 
 			String asciiEncodedString = new String(germanBytes);
-			response=asciiEncodedString;
-			
-			//System.out.println("response -- " + response);
+			response = asciiEncodedString;
+
+			// System.out.println("response -- " + response);
 			t.sendResponseHeaders(200, response.length());
 			OutputStream out = t.getResponseBody();
 			out.write(response.getBytes());
@@ -107,6 +134,7 @@ public class Registor {
 
 		}
 	}
+
 	class Page implements HttpHandler {
 
 		private String path;
@@ -116,7 +144,7 @@ public class Registor {
 		}
 
 		private String postmahad(HttpExchange t) throws IOException {
-		
+
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 
@@ -167,6 +195,7 @@ public class Registor {
 
 		}
 	}
+
 	public static String[] listFile(String path) {
 
 		ArrayList<String> arl = new ArrayList<String>();
@@ -174,7 +203,7 @@ public class Registor {
 		walk(path, arl);
 
 		for (String st : arl) {
-			//System.out.println("finded: " + st);
+			// System.out.println("finded: " + st);
 		}
 		String[] temp = new String[arl.size()];
 		return arl.toArray(temp);
@@ -199,4 +228,5 @@ public class Registor {
 
 			}
 		}
+	}
 }
