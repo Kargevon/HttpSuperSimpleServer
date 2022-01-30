@@ -29,11 +29,11 @@ public class WebPage implements HttpHandler {
 		
 	}
 
-	private String POSTmanager(HttpExchange t) {
+	private String POSTmanager(HttpExchange t) throws IOException {
 		InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
 		BufferedReader br = new BufferedReader(isr);
 
-		// From now on, the right way of moving from bytes to utf-8 characters:
+		
 
 		int b;
 		StringBuilder buf = new StringBuilder(512);
@@ -44,20 +44,15 @@ public class WebPage implements HttpHandler {
 		br.close();
 		isr.close();
 		// System.out.println(buf.toString());
-		String result = "";
-		try {
-			result = mainlaunch.dosomethingwith(buf.toString());
-		} catch (SQLException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return result;
+	
+		return "";
 		
 		
 	}
 	private String GETmanager(HttpExchange t) {
 		Map<String, String> mp = queryToMap(t.getRequestURI().getQuery());
 		
+		return "";
 	}
 	
 	@Override
