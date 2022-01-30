@@ -29,10 +29,10 @@ public class WebPage implements HttpHandler {
 		
 	}
 
-	private String doSomethingWithGetRequest(Map<String, String> mp) {
+	protected String doSomethingWithGetRequest(Map<String, String> mp) {
 		return "";
 	}
-	private String doSomethingWithPostRequest(Map<String, String> mp) {
+	protected String doSomethingWithPostRequest(Map<String, String> mp) {
 		return "";
 	}
 	
@@ -95,7 +95,7 @@ public class WebPage implements HttpHandler {
 		t.close();
 		
 	}
-	private static void printInfo(HttpExchange t) {
+	protected static void printInfo(HttpExchange t) {
 
 		String adr = t.getRemoteAddress().getAddress().toString();
 		String prot = t.getProtocol();
@@ -106,7 +106,7 @@ public class WebPage implements HttpHandler {
 				"|adr: " + adr + " |prot: " + prot + " |uri: " + uri + " |method: " + meth + " |code: " + code + " |");
 
 	}
-	public Map<String, String> queryToMap(String query) {
+	private Map<String, String> queryToMap(String query) {
 	    if(query == null) {
 	        return null;
 	    }

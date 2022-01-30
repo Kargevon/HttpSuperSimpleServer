@@ -35,7 +35,7 @@ public class Registor {
 		this.server_folder = server_folder;
 	}
 
-	public void init() {
+	public void init() throws IOException {
 		server = HttpServer.create(new InetSocketAddress(port), 0);
 		server.setExecutor(null);
 	}
@@ -52,139 +52,8 @@ public class Registor {
 		
 	}
 
-	public void one(String pathtoserverfolder) throws Exception {
+	
 
-		File dirhome = new File(pathtoserverfolder);
-		if (!dirhome.isDirectory()) {
-			throw new Exception(pathtoserverfolder + " isnt a folder");
-		}
-
-		String filelist[] = FileProcessor.listFile(pathtoserverfolder);
-
-		HttpServer serv = HttpServer.create(new InetSocketAddress(80), 0);
-		serv.createContext("/", new Page(pathtoserverfolder + "/index.html"));
-		for (int i = 0; i != filelist.length; ++i) {
-
-			filelist[i] = filelist[i].substring(pathtoserverfolder.length());
-			System.out.println("Created web page: " + filelist[i].replace(File.separatorChar, '/'));
-
-			serv.createContext(filelist[i].replace('\\', '/'), new Page(pathtoserverfolder + filelist[i]));
-		}
-
-		serv.createContext("/suck", new Man());
-		serv.createContext("/dick", new SaveEmail());
-
-		serv.setExecutor(null);
-		serv.start();
-
-	}
-
-	class Man implements HttpHandler {
-
-		@Override
-		public void handle(HttpExchange t) throws IOException {
-			printInfo(t);
-			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-
-			// From now on, the right way of moving from bytes to utf-8 characters:
-
-			int b;
-			StringBuilder buf = new StringBuilder(512);
-			while ((b = br.read()) != -1) {
-				buf.append((char) b);
-			}
-
-			br.close();
-			isr.close();
-			// System.out.println(buf.toString());
-			String result = "";
-			try {
-				// start of all SHIT
-				result = mainlaunch.dosomethingwith(buf.toString());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			String response = result;
-			// response = response.replaceAll("�", "�");
-			System.out.println("response -- " + response);
-			byte[] germanBytes = response.getBytes(StandardCharsets.UTF_16);
-
-			String asciiEncodedString = new String(germanBytes);
-			response = asciiEncodedString;
-
-			// System.out.println("response -- " + response);
-			t.sendResponseHeaders(200, response.length());
-			OutputStream out = t.getResponseBody();
-			out.write(response.getBytes());
-			out.close();
-			t.close();
-
-		}
-	}
-
-	class Page implements HttpHandler {
-
-		private String path;
-
-		public Page(String path) {
-			this.path = path;
-		}
-
-		private String postmahad(HttpExchange t) throws IOException {
-
-			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-
-			// From now on, the right way of moving from bytes to utf-8 characters:
-
-			int b;
-			StringBuilder buf = new StringBuilder(512);
-			while ((b = br.read()) != -1) {
-				buf.append((char) b);
-			}
-
-			br.close();
-			isr.close();
-			// System.out.println(buf.toString());
-			String result = "";
-			try {
-				result = mainlaunch.dosomethingwith(buf.toString());
-			} catch (SQLException | UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return result;
-		}
-
-		@Override
-		public void handle(HttpExchange t) throws IOException {
-			printInfo(t);
-			// System.out.println(path+" "+t.getRequestMethod());
-
-			// if (t.getRequestMethod().equals("GET")) {
-
-			File index = new File(path);
-			t.sendResponseHeaders(200, index.length());
-
-			OutputStream outputStream = t.getResponseBody();
-			Path p = index.toPath();
-
-			Files.copy(p, outputStream);
-			outputStream.close();
-			t.close();
-			/*
-			 * } else if (t.getRequestMethod().equals("POST")) {
-			 * 
-			 * String response = postmahad(t); t.sendResponseHeaders(200,
-			 * response.length()); OutputStream out = t.getResponseBody();
-			 * out.write(response.getBytes()); }
-			 */
-
-		}
-	}
 
 	public static String[] listFile(String path) {
 
@@ -218,5 +87,33 @@ public class Registor {
 
 			}
 		}
+	}
+
+	/**
+	 * @return the port
+	 */
+	public int getPort() {
+		return port;
+	}
+
+	/**
+	 * @param port the port to set
+	 */
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	/**
+	 * @return the server_folder
+	 */
+	public String getServer_folder() {
+		return server_folder;
+	}
+
+	/**
+	 * @param server_folder the server_folder to set
+	 */
+	public void setServer_folder(String server_folder) {
+		this.server_folder = server_folder;
 	}
 }
