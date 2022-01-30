@@ -19,6 +19,8 @@ import com.sun.net.httpserver.HttpHandler;
 
 public class WebPage implements HttpHandler {
 
+	private final boolean DEBUG = true;
+	
 	private String path;
 	
 	public WebPage() {
@@ -26,7 +28,7 @@ public class WebPage implements HttpHandler {
 	}
 	
 	public WebPage(String path) {
-		
+		this.path=path;
 	}
 
 	protected String doSomethingWithGetRequest(Map<String, String> mp) {
@@ -69,23 +71,26 @@ public class WebPage implements HttpHandler {
 		printInfo(t);
 		String response ="";
 		if(t.getRequestMethod().equals("POST")) {
+			
 		//обрабоатывае пост запрос
-			response="";
+			response=POSTmanager(t);
 		}
 		else if(t.getRequestMethod().equals("GET")) {
 			//обрабатываем гет запрос
-			response="";
+			response=GETmanager(t);
 		}
 		
 		OutputStream outputStream = t.getResponseBody();
 		
 		if(response.length()>0) {
+			
+			if(DEBUG)System.out.println(response);
 			//если нужен специфичный ответ, т.е. функции обработки запросов чет вернули, то возвращаем то, шо они вернули
 			t.sendResponseHeaders(200, response.length());
 			outputStream.write(response.getBytes());
 		}else {
 			//иначе выводим страницу ебать да
-		
+			if(DEBUG)System.out.println(path);
 		File index = new File(path);
 		t.sendResponseHeaders(200, index.length());
 		Path p = index.toPath();

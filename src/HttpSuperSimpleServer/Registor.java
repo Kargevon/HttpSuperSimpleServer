@@ -20,7 +20,6 @@ import com.sun.net.httpserver.HttpServer;
 import sun.font.CreatedFontTracker;
 
 public class Registor {
-	
 
 	private int port;
 	private String server_folder;
@@ -40,20 +39,34 @@ public class Registor {
 		server.setExecutor(null);
 	}
 
-	private void addContext() {
-
-		System.out.println("Server folder: "+server_folder);
-		String filelist[] = listFile(server_folder);
-		
-		for(int i=0; i!=filelist.length; ++i) {
-			
-			server.createContext(filelist[i].substring(server_folder.length()).replace('\\', '/'), new Page());
-		}
-		
+	public void addSpecificContext(String URI, WebPage d) {
+		System.out.println("Creatd page: "+URI);
+		server.createContext(URI, d);
 	}
 
-	
+	public void addStaticContext() {
 
+		System.out.println("Server folder: " + server_folder);
+		String filelist[] = listFile(server_folder);
+
+		for (int i = 0; i != filelist.length; ++i) {
+			System.out.println("Creatd page: "+filelist[i].substring(server_folder.length()).replace('\\', '/'));
+		
+			
+			server.createContext(filelist[i].substring(server_folder.length()).replace('\\', '/'),
+					new WebPage(filelist[i]));
+		}
+
+	}
+
+	public void lego() {
+		server.start();
+	}
+
+	public void pruu() {
+		server.stop(0);
+
+	}
 
 	public static String[] listFile(String path) {
 
