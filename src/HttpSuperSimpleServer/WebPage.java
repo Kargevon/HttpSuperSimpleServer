@@ -53,6 +53,7 @@ public class WebPage implements HttpHandler {
 		}
 		return result;
 		
+		
 	}
 	private String GETmanager(HttpExchange t) {
 		Map<String, String> mp = queryToMap(t.getRequestURI().getQuery());
