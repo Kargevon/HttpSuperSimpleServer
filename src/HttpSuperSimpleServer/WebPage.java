@@ -29,6 +29,13 @@ public class WebPage implements HttpHandler {
 		
 	}
 
+	private String doSomethingWithGetRequest(Map<String, String> mp) {
+		return "";
+	}
+	private String doSomethingWithPostRequest(Map<String, String> mp) {
+		return "";
+	}
+	
 	private String POSTmanager(HttpExchange t) throws IOException {
 		InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
 		BufferedReader br = new BufferedReader(isr);
@@ -43,16 +50,18 @@ public class WebPage implements HttpHandler {
 
 		br.close();
 		isr.close();
-		// System.out.println(buf.toString());
+		Map<String, String> mp = queryToMap(buf.toString());
 	
-		return "";
+		return doSomethingWithPostRequest(mp);
 		
 		
 	}
 	private String GETmanager(HttpExchange t) {
 		Map<String, String> mp = queryToMap(t.getRequestURI().getQuery());
 		
-		return "";
+		
+		
+		return doSomethingWithGetRequest(mp);
 	}
 	
 	@Override
