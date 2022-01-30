@@ -68,6 +68,7 @@ public class WebPage implements HttpHandler {
 	
 	@Override
 	public void handle(HttpExchange t) throws IOException {
+		
 		printInfo(t);
 		String response ="";
 		if(t.getRequestMethod().equals("POST")) {
@@ -84,7 +85,7 @@ public class WebPage implements HttpHandler {
 		
 		if(response.length()>0) {
 			
-			if(DEBUG)System.out.println(response);
+			if(DEBUG)System.out.println("Response: "+response);
 			//если нужен специфичный ответ, т.е. функции обработки запросов чет вернули, то возвращаем то, шо они вернули
 			t.sendResponseHeaders(200, response.length());
 			outputStream.write(response.getBytes());
